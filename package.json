@@ -1,0 +1,14 @@
+{
+    "name": "fred-javascript",
+    "description": "Implementation of FRED Format for JavaScript",
+    "version": "0.1.0",
+    "author": "Matheus Bernardo <matheussbernardo@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fred-format/fred-javascript.git"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "chevrotain": "^4.3.3"
+    }
+}
