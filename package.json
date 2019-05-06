@@ -1,8 +1,9 @@
 {
-    "name": "fred-javascript",
+    "name": "fred-js",
     "description": "Implementation of FRED Format for JavaScript",
     "version": "0.1.0",
     "author": "Matheus Bernardo <matheussbernardo@gmail.com>",
+    "main": "index.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/fred-format/fred-javascript.git"

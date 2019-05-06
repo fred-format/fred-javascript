@@ -7,7 +7,7 @@ function parse(text) {
     const lexingResult = FREDLexer.tokenize(text)
     parser.input = lexingResult.tokens
 
-    const cst = parser.value()
+    const cst = parser.document()
     const visitor = new FREDToAstVisitor()
 
     if (parser.errors.length > 0) {

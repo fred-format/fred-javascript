@@ -8,11 +8,24 @@ class FREDToAstVisitor extends BaseCstVisitor {
         this.validateVisitor()
     }
 
+    document(ctx) {
+        if (ctx.stream) {
+            return this.visit(ctx.stream)
+        }
+        else {
+            return this.visit(ctx.value)
+        }
+    }
+
+    stream(ctx) {
+        return ctx.value.map((node) => this.visit(node))
+    }
+
     value(ctx) {
-        if (ctx.tagged != null) {
+        if (ctx.tagged) {
             return this.visit(ctx.tagged)
         }
-        if (ctx.atom != null) {
+        else {
             return this.visit(ctx.atom)
         }
     }

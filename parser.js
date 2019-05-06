@@ -6,6 +6,20 @@ class FREDParser extends Parser {
         super(allTokens, config)
 
         const $ = this
+        $.RULE("document", () => {
+            $.OR([
+                { ALT: () => $.SUBRULE($.stream) },
+                { ALT: () => $.SUBRULE($.value) }
+            ])
+        })
+
+        $.RULE("stream", () => {
+            $.CONSUME(tokens.StreamSep)
+            $.MANY(() => {
+                this.SUBRULE($.value)
+                $.CONSUME1(tokens.StreamSep)
+            })
+        })
 
         $.RULE("value", () => {
             $.OR([

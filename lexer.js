@@ -9,6 +9,7 @@ const LSquare = createToken({ name: "LSquare", pattern: /\[/ })
 const RSquare = createToken({ name: "RSquare", pattern: /]/ })
 const LParens = createToken({ name: "LParens", pattern: /\(/ })
 const RParens = createToken({ name: "RParens", pattern: /\)/ })
+const StreamSep = createToken({ name: "StreamSep", pattern: /---/ })
 const Equal = createToken({ name: "Equal", pattern: /=/ })
 const Colon = createToken({ name: "Colon", pattern: /:/ })
 const T = createToken({ name: "T", pattern: /T/ })
@@ -102,6 +103,7 @@ const allTokens = [
     RParens,
     LSquare,
     RSquare,
+    StreamSep,
     Equal,
     Colon,
     T,
@@ -135,6 +137,7 @@ module.exports = {
         RParens,
         LSquare,
         RSquare,
+        StreamSep,
         Equal,
         Colon,
         T,
