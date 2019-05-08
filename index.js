@@ -12,7 +12,7 @@ function parse(text) {
 
     if (parser.errors.length > 0) {
         console.log(parser.errors)
-        throw new Error("sad sad panda, Parsing errors detected")
+        throw new Error("Parsing errors detected")
     }
     else {
         const ast = visitor.visit(cst)
