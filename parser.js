@@ -44,27 +44,26 @@ class FREDParser extends Parser {
 
         $.RULE("tagged", () => {
             $.OR([
-                {
-                    ALT: () => {
-                        $.SUBRULE($.name)
-                        $.OPTION(() => {
-                            $.SUBRULE($.attrs)
-                        })
-                        $.SUBRULE($.atom)
-                    }
-                },
-                {
-                    ALT: () => {
-                        $.CONSUME(tokens.LParens)
-                        $.SUBRULE1($.name)
-                        $.MANY(() => {
-                            $.SUBRULE($.attr)
-                        })
-                        $.CONSUME(tokens.RParens)
-                    }
-                },
+                { ALT: () => $.SUBRULE($.tag) },
+                { ALT: () => $.SUBRULE($.voidTag) }
             ])
+        })
 
+        $.RULE("tag", () => {
+            $.SUBRULE($.name)
+            $.OPTION(() => {
+                $.SUBRULE($.attrs)
+            })
+            $.SUBRULE($.atom)
+        })
+
+        $.RULE("voidTag", () => {
+            $.CONSUME(tokens.LParens)
+            $.SUBRULE($.name)
+            $.MANY(() => {
+                $.SUBRULE($.attr)
+            })
+            $.CONSUME(tokens.RParens)
         })
 
         $.RULE("attrs", () => {

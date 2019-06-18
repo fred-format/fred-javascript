@@ -1,7 +1,6 @@
 const { FREDLexer } = require('./lexer')
 const parser = require('./parser')
-const FREDToAstVisitor = require('./visitor')
-
+const { FREDToAstVisitor, FredDocument, FredStream, FredValue } = require('./visitor')
 
 function parse(text) {
     const lexingResult = FREDLexer.tokenize(text)
@@ -20,4 +19,4 @@ function parse(text) {
     }
 }
 
-module.exports = parse
+module.exports = parse, FredDocument, FredStream, FredValue
