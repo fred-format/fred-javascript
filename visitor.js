@@ -144,9 +144,15 @@ class FREDToAstVisitor extends BaseCstVisitor {
         return Symbol(this.visit(ctx.name))
     }
     dateOrDateTime(ctx) {
-        let dateStr = ctx.DateFormat[0].image + "T" + ctx.Time[0].image + ctx.TimeOffSet[0].image
-        let date = new Date(dateStr)
-        return date
+        let dateStr = ctx.DateFormat[0].image
+        if (ctx.Time != undefined) {
+            dateStr = dateStr + "T" + ctx.Time[0].image;
+            if (ctx.TimeOffSet != undefined) {
+                dateStr = dateStr + ctx.TimeOffSet[0].image;
+            }
+        }
+
+        return dateStr
     }
     number(ctx) {
         if (ctx.NumberLiteral) {
@@ -196,12 +202,22 @@ class FredDocument {
     constructor(value) {
         this.value = value;
     }
+    minify() {
+        return this.value.minify();
+    }
 }
 
 class FredStream {
     constructor(value) {
         this.value = value;
     }
+    minify() {
+        return this.value.reduce(minifyStream, "") + "---"
+    }
+}
+
+function minifyStream(acc, value) {
+    return acc + "---" + value.minify();
 }
 
 class FredValue {
@@ -209,6 +225,68 @@ class FredValue {
         this.tag = tag;
         this.meta = meta;
         this.value = value;
+    }
+    minify() {
+        if (this.tag && this.meta && this.value) {
+            return this.tag + "(" + minifyMeta(this.meta) + ")" + minifyValue(this.value);
+        }
+        if (this.tag && this.meta == null && this.value) {
+            return this.tag + minifyValue(this.value);
+        }
+        if (this.tag && this.meta && this.value == null) {
+            return "(" + this.tag + " " + minifyMeta(this.meta) + ")"
+        }
+        if (this.tag == null && this.meta == null) {
+            return minifyValue(this.value);
+        }
+    }
+}
+
+function minifyMeta(meta) {
+    const entries = Object.entries(meta)
+    let str = ""
+    for (const [key, value] of entries) {
+        str = str + " " + key + "=" + value
+    }
+    return str.slice(1)
+}
+
+function minifyValue(value) {
+    if (value instanceof FredValue) {
+        return value.minify();
+    }
+    if (value === null) {
+        return "null"
+    }
+    if (value === true) {
+        return "true"
+    }
+    if (value === false) {
+        return "false"
+    }
+    if (typeof value == 'number') {
+        return value.toString();
+    }
+    if (typeof value === 'string') {
+        return "\"" + value + "\""
+    }
+    if (typeof value === 'object') {
+        if (Array.isArray(value)) {
+            let arr = value
+            let str = ""
+            for (const v of arr) {
+                str = str + " " + minifyValue(v);
+            }
+            return "[" + str.slice(1) + "]"
+        }
+        if (value === Object(value)) {
+            const entries = Object.entries(value)
+            let str = ""
+            for (const [key, value] of entries) {
+                str = str + " " + key + ":" + minifyValue(value);
+            }
+            return "{" + str.slice(1) + "}"
+        }
     }
 }
 
