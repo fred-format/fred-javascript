@@ -54,7 +54,7 @@ class FREDParser extends Parser {
             $.OPTION(() => {
                 $.SUBRULE($.attrs)
             })
-            $.SUBRULE($.atom)
+            $.SUBRULE($.value)
         })
 
         $.RULE("voidTag", () => {
@@ -135,7 +135,6 @@ class FREDParser extends Parser {
         })
 
         $.RULE("blobString", () => {
-            $.CONSUME(tokens.BlobInit)
             $.CONSUME(tokens.BlobString)
         })
 

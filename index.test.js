@@ -14,6 +14,7 @@ describe('Valid FRED Documents', () => {
                 const output = validTests[i][j].output;
 
                 const parsedInput = toTestEncoding(parse(input));
+                console.log("ParsedInput", parsedInput);
                 const jsonInput = JSON.stringify(parsedInput, null, 4);
                 expect(jsonInput).toBe(output);
             });
@@ -87,73 +88,100 @@ function getInvalidTests() {
 
 
 function toTestEncoding(fred) {
-    if (fred instanceof FredDocument) {
-        tag = fred.value.tag;
-        value = transformToEncode(fred.value.value);
-        meta = getMeta(fred.value.meta);
+    if (fred.tag !== null && fred.value === null) {
+        let tag = fred.tag;
+        let meta
+        if (fred.meta === null) {
+            meta = null
+        }
+        else {
+            meta = getMeta(fred.meta);
+        }
+        let value = transformToEncode(fred.value);
 
         encodedObj = {
             tag: tag,
-            value: value,
-            meta: meta
+            meta: meta,
+            value: value
+        }
+
+        return encodedObj;
+    }
+    if (fred.tag !== null && fred.value) {
+        let tag = fred.tag;
+        let meta
+        if (fred.meta === null) {
+            meta = null
+        }
+        else {
+            meta = getMeta(fred.meta);
+        }
+        let value = transformToEncode(fred.value);
+
+        encodedObj = {
+            tag: tag,
+            meta: meta,
+            value: value
         }
 
         return encodedObj;
     }
 
-    if (fred instanceof FredValue) {
-        tag = fred.tag;
-        value = transformToEncode(fred.value);
-        meta = getMeta(fred.meta);
+    if (fred !== undefined && fred.value === undefined && fred.tag === undefined && fred.meta === undefined) {
+        value = transformToEncode(fred);
 
-        encodedObj = {
-            tag: tag,
-            value: value,
-            meta: meta
-        }
-
-        return encodedObj;
-    }
-
-
-    if (fred instanceof FredStream) {
-        return transformToEncode(fred.value);
+        return value;
     }
 }
 
 function transformToEncode(value) {
+    if (value === null) {
+        return null;
+    }
 
-    if (typeof value == 'string') {
+    if (value instanceof Date) {
+        return { type: "date", value: value.toISOString() };
+    }
+    if (value.date !== undefined) {
+        return { type: "date", value: value.date };
+    }
+    if (value.time !== undefined) {
+        return { type: "date", value: value.time };
+    }
+    if (value.blob !== undefined) {
+        return { type: "blob", value: value.blob };
+    }
+
+    if (typeof value === 'string') {
         return value;
     }
 
-    if (typeof value == 'number') {
-        return value.toString();
+    if (typeof value === 'number') {
+        return value;
     }
 
-    if (typeof value == 'boolean') {
-        return value.toString();
+    if (typeof value === 'boolean') {
+        return value;
     }
 
-    if (typeof value == 'symbol') {
-        return value.toString(); // TO DO IMPROVE SYMBOL RETRIEVE
+    if (typeof value === 'symbol') {
+        var myRegexp = /\((.+)\)/g;
+        var match = myRegexp.exec(value.toString());
+        return { type: "symbol", value: match[1] }; // TO DO IMPROVE SYMBOL RETRIEVE
     }
 
-    if (value == null) {
-        return "null";
-    }
 
-    if (typeof value == 'object') {
+    if (typeof value === 'object') {
         if (Array.isArray(value)) {
             return value.map((elem) => {
-                return transformToEncode(elem);
+                return toTestEncoding(elem);
             });
         }
         if (value === Object(value)) {
             let o = objectMap(value, (v) => {
                 return toTestEncoding(v);
             });
-            return o;
+            return { type: "object", value: o };
         }
     }
 }

@@ -15,22 +15,21 @@ const Colon = createToken({ name: "Colon", pattern: /:/ })
 const T = createToken({ name: "T", pattern: /T/ })
 const _ = createToken({ name: "_", pattern: /_/ })
 const SymbolInit = createToken({ name: "SymbolInit", pattern: /\$/ })
-const BlobInit = createToken({ name: "BlobInit", pattern: /#/ })
 
 const StringLiteral = createToken({
     name: "StringLiteral",
-    pattern: /"(?:[^\\"]|\\(?:[bfnrtv"\\/]|x[0-9a-fA-F]|u[0-9a-fA-F]{4}|U[0-9a-fA-F]))*"/
+    pattern: /"(?:[^\\"]|\\(?:[bfnrtv"\\/]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}))*"/
 })
 
 const BlobString = createToken({
     name: "BlobString",
-    pattern: /"(?:[^\\"\u\U]|\\(?:[bfnrtv"\\/]|x[0-9a-fA-F]))*"/,
+    pattern: /#"(?:[^\\"\u\U]|\\(?:[bfnrtv"\\/]|x[0-9a-fA-F]{2}))*"/,
     line_breaks: false
 })
 
 const QuotedVariable = createToken({
     name: "QuotedVariable",
-    pattern: /`(?:[^\\`]|\\(?:[bfnrtv`\\/]|x[0-9a-fA-F]|u[0-9a-fA-F]{4}|U[0-9a-fA-F]))*`/
+    pattern: /`(?:[^\\`]|\\(?:[bfnrtv`\\/]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}))*`/
 })
 
 const Variable = createToken({
@@ -40,7 +39,7 @@ const Variable = createToken({
 
 const NumberLiteral = createToken({
     name: "NumberLiteral",
-    pattern: /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/
+    pattern: /[+-]?((0|[1-9]{1})(([0-9]{1}|_[0-9]{1})*))(\.\d+)?([eE][+-]?\d+)?/
 })
 
 const HexLiteral = createToken({
@@ -86,15 +85,13 @@ const TimeOffSet = createToken({
 })
 
 const allTokens = [
-    WhiteSpace,
-    Comment,
     DateFormat,
     Time,
     TimeOffSet,
-    NumberLiteral,
     HexLiteral,
     OctLiteral,
     BinLiteral,
+    NumberLiteral,
     StringLiteral,
     BlobString,
     LCurly,
@@ -109,7 +106,6 @@ const allTokens = [
     T,
     _,
     SymbolInit,
-    BlobInit,
     True,
     False,
     Null,
@@ -122,10 +118,10 @@ module.exports = {
     FREDLexer, tokens: {
         WhiteSpace,
         Comment,
-        NumberLiteral,
         HexLiteral,
         OctLiteral,
         BinLiteral,
+        NumberLiteral,
         StringLiteral,
         BlobString,
         DateFormat,
@@ -143,7 +139,6 @@ module.exports = {
         T,
         _,
         SymbolInit,
-        BlobInit,
         True,
         False,
         Null,
